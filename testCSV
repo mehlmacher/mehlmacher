@@ -1,4 +1,4 @@
-business_rule_name,trigger_value 
-vehicle_age,>3650
-invoice_age,>3650
-production_age,>3650
+businessRuleName,inputValue,outputValue,letterCode 
+vehicle_age,>3650,reject,rejectVehicleAge
+invoice_age,>3650,reject,rejectInvoiceAge
+production_age,>3650,rejectProductionAge
