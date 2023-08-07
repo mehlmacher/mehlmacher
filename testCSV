@@ -1,3 +1,4 @@
-vehicle_age, 10
-invoice_age, 10
-manufacturer, BRILLIANCE
+business_rule_name,trigger_value 
+vehicle_age,>3650
+invoice_age,>3650
+production_age,>3650
