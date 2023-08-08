@@ -1,2 +1,2 @@
-businessRuleName,registrationAge,productionAge,invoiceAge,mileage,outputValue,letterCode 
-age,>3650,>3650,>3650,>100000,reject,AcceptanceCriteriaNotPassed
+registrationAge,productionAge,invoiceAge,mileage,outputValue,letterCode 
+>3650,>3650,>3650,>100000,reject,AcceptanceCriteriaNotPassed
