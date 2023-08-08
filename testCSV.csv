@@ -1,5 +1,5 @@
-businessRuleName,inputValue,outputValue,letterCode 
-vehicleAge,>3650,reject,rejectVehicleAge
-invoiceAge,>3650,reject,rejectInvoiceAge
-productionAge,>3650,reject,rejectProductionAge
-mileage,>100000,reject,rejectProductionAge
+businessRuleName,inputValue,ignoreExclusionRules,outputValue,letterCode 
+vehicleAge,>3650,false,reject,rejectVehicleAge
+invoiceAge,>3650,false,reject,rejectInvoiceAge
+productionAge,>3650,false,reject,rejectProductionAge
+mileage,>100000,false,reject,rejectProductionAge
