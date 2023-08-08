@@ -1,4 +1,2 @@
-businessRuleName,inputValue,outputValue,letterCode 
-vehicleAge,>3650,reject,rejectVehicleAge
-invoiceAge,>3650,reject,rejectInvoiceAge
-productionAge,>3650,reject,rejectProductionAge
+businessRuleName,vehicleAge,productionAge,invoiceAge,outputValue,letterCode 
+age,>3650,>3650,>3650,reject,rejectAgeExceeded
