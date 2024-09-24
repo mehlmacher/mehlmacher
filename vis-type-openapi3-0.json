@@ -1,0 +1,2495 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "neo-vis-type",
+        "version": "2.0.0",
+        "title": "Vehicle Service Type REST API"
+    },
+    "servers": [
+        {
+            "url": "http://neo-vis-type.lindner.santander.corp",
+            "description": "Server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "type"
+        }
+    ],
+    "paths": {
+        "/types/{id}": {
+            "get": {
+                "tags": [
+                    "type"
+                ],
+                "summary": "Delivers all details about a vehicle type for given Schwacke or GlobalTypeId codes and specific price list date",  
+                "parameters": [
+  
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The type ID, which is the Schwacke or GlobalTypeId codes",
+                        "required": true,
+                        "example": "10133380",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "priceListDate",
+                        "in": "query",
+                        "description": "The price list date to retrieve the type that is included in a price list. If the date falls within a price list, the type will be returned from that list. If the date is before the start of the first valid price list, the date will be adjusted to the start date of the first valid price list for the type. If it is after the end of the last valid price list, it will be adjusted to the end date of the last valid price list. Therefore, the priceListDate parameter will never cause an error, but it should be considered in the presentation of the results in the consuming application. This parameter is not evaluated when searching by globalTypeId.",
+                        "required": false,
+                        "example": "2017-04-01",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "datasource",
+                        "in": "query",
+                        "description": "Data source",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TypeResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserInputErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No type found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResourceErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/brands": {
+            "get": {
+                "tags": [
+                    "type"
+                ],
+                "summary": "List of manufacturers with their corresponding manufacturer ID according to Schwacke",
+                "description": "",
+                "operationId": "getMakes",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "The Bearer Authorization token received from Kosyfa Handshake or, temporarily, the Basic user/password value, e.g., from http://www.blitter.se/utils/basic-authentication-header-generator/",
+                        "required": true,
+                        "example": "Bearer ... OR Basic ...",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "datasource",
+                        "in": "query",
+                        "description": "Data source",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "vehicleTypes",
+                        "in": "query",
+                        "description": "List of object categories (Schwacke VehicleType) used to filter the search. Possible values are: 10 for passenger cars, 20 for vans, 30 for motorcycles, and 40 for SUVs. The parameters are optional, and multiple values can be provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "vehicleClasses",
+                        "in": "query",
+                        "description": "List of object categories (VehicleClass) used to filter the search. Possible values are: CAR for passenger cars or SUVs, VAN for vans, MOTORCYCLE for motorcycles. The parameters are optional, and multiple values can be provided.",
+                        "required": false,
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "CAR",
+                                    "VAN",
+                                    "MOTORCYCLE"
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetAllMakesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "No unique make is found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResourceErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/brands/{id}": {
+            "get": {
+                "tags": [
+                    "type"
+                ],
+                "summary": "Manufacturer name for the given SchwackeID (NATCode) or GlobalMakeID",
+                "description": "",
+                "operationId": "getMake",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "example": "51",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "The Bearer Authorization token received from Kosyfa Handshake or, temporarily, the Basic user/password value, e.g., from http://www.blitter.se/utils/basic-authentication-header-generator/",
+                        "required": true,
+                        "example": "Bearer ... OR Basic ...",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "datasource",
+                        "in": "query",
+                        "description": "Data source",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetMakeResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No make found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResourceErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/models": {
+            "get": {
+                "tags": [
+                    "type"
+                ],
+                "summary": "Models with names and Schwacke IDs of the models and the manufacturer",
+                "description": "",
+                "operationId": "searchModels",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "The Bearer Authorization token received from Kosyfa Handshake or, temporarily, the Basic user/password value, e.g., from http://www.blitter.se/utils/basic-authentication-header-generator/",
+                        "required": true,
+                        "example": "Bearer ... OR Basic ...",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "modelId",
+                        "in": "query",
+                        "description": "Schwacke NATCode of the model (required if no other Id is provided)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "makeId",
+                        "in": "query",
+                        "description": "Schwacke NATCode of the manufacturer (required if no other Id is provided)",
+                        "required": false,
+                        "example": "51",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "globalModelId",
+                        "in": "query",
+                        "description": "Id of the model across all data sources (required if no other Id is provided)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "globalMakeId",
+                        "in": "query",
+                        "description": "Id of the manufacturer across all data sources (required if no other Id is provided)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "datasource",
+                        "in": "query",
+                        "description": "Data source",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "vehicleTypes",
+                        "in": "query",
+                        "description": "List of object categories (Schwacke VehicleType) used to filter the search. Possible values are: 10 for cars, 20 for vans, 30 for motorcycles, and 40 for SUVs. The parameter is optional and multiple values can be entered.",
+                        "required": false,
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    {
+                        "name": "vehicleClasses",
+                        "in": "query",
+                        "description": "List of object categories (VehicleClass) used to filter the search. Possible values are: CAR for cars or SUVs, VAN for vans, MOTORCYCLE for motorcycles. The parameter is optional and multiple values can be entered.",
+                        "required": false,
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "CAR",
+                                    "VAN",
+                                    "MOTORCYCLE"
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchModelsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserInputErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No model found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResourceErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pricelists": {
+            "get": {
+                "tags": [
+                    "type"
+                ],
+                "summary": "Price lists with start and end dates for a given model, type, and time interval",
+                "description": "",
+                "operationId": "searchPriceLists",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "The Bearer Authorization token received from Kosyfa Handshake or, temporarily, the Basic user/password value, e.g., from http://www.blitter.se/utils/basic-authentication-header-generator/",
+                        "required": true,
+                        "example": "Bearer ... OR Basic ...",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "modelId",
+                        "in": "query",
+                        "description": "Schwacke NATCode of the model (required if no other Id is provided)",
+                        "required": false,
+                        "example": "2362",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "typeId",
+                        "in": "query",
+                        "description": "Schwacke NATCode of the type (required if no other Id is provided)",
+                        "required": false,
+                        "example": "10511393",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "globalModelId",
+                        "in": "query",
+                        "description": "Id of the model across all data sources (required if no other Id is provided)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "globalTypeId",
+                        "in": "query",
+                        "description": "Id of the type across all data sources (required if no other Id is provided)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "datasource",
+                        "in": "query",
+                        "description": "Data source",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "beginDateRange",
+                        "in": "query",
+                        "description": "Start of the interval for which the price list values are expected",
+                        "required": false,
+                        "example": "2017-05-24",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "endDateRange",
+                        "in": "query",
+                        "description": "End of the interval for which the price list values are expected",
+                        "required": false,
+                        "example": "2019-01-01",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchPriceListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserInputErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No price list found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResourceErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/types": {
+            "get": {
+                "tags": [
+                    "type"
+                ],
+                "summary": "All vehicle types for a manufacturer or model within a price list interval",
+                "description": "",
+                "operationId": "searchTypeSummaries",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "The Bearer Authorization token received from Kosyfa Handshake or, temporarily, the Basic user/password value, e.g., from http://www.blitter.se/utils/basic-authentication-header-generator/",
+                        "required": true,
+                        "example": "Bearer ... OR Basic ...",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "makeId",
+                        "in": "query",
+                        "description": "Schwacke NATCode of the manufacturer (required if modelId is not provided)",
+                        "required": false,
+                        "example": "51",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "modelId",
+                        "in": "query",
+                        "description": "Schwacke NATCode of the model (required if makeId is not provided)",
+                        "required": false,
+                        "example": "2362",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "globalModelId",
+                        "in": "query",
+                        "description": "Id of the model across all data sources (required if no other Id is provided)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "manufacturerCodePrefix",
+                        "in": "query",
+                        "description": "Prefix, optional field to filter by list of manufacturer codes",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "datasource",
+                        "in": "query",
+                        "description": "Data source",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tsn",
+                        "in": "query",
+                        "description": "The TypSchluesselnummer (Type Key Number)",
+                        "required": false,
+                        "example": "BAC",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "hsn",
+                        "in": "query",
+                        "description": "The Herstellerschluesselnummer (Manufacturer Key Number)",
+                        "required": false,
+                        "example": "0588",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "power",
+                        "in": "query",
+                        "description": "Engine power in kW",
+                        "required": false,
+                        "example": "110",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "priceListBeginDate",
+                        "in": "query",
+                        "description": "Start date of the price list validity (ISO 8601 format)",
+                        "required": false,
+                        "example": "2010-09-28",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "priceListEndDate",
+                        "in": "query",
+                        "description": "End date of the price list validity (ISO 8601 format)",
+                        "required": false,
+                        "example": "2017-09-28",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "freeTextSearch",
+                        "in": "query",
+                        "description": "Free Text Search",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchTypeSummariesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserInputErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No type summary found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResourceErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "requestBodies": {
+            "getMakeBody": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "BasicEquipment": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Additional ID of the basic equipment according to Schwacke"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "SOA code according to Schwacke of the basic equipment"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the basic equipment"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Long text / description of the basic equipment"
+                    },
+                    "manufacturerCode": {
+                        "type": "string",
+                        "description": "Manufacturer order code of the basic equipment"
+                    },
+                    "flagPack": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Flag that describes whether the equipment belongs to a package, is individual, or both. 0 - Individual item, 1 - Equipment package, 2 - Individual item but also included in an equipment package"
+                    },
+                    "targetGroup": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Flag that describes whether the equipment belongs to a fleet package (0 = Customer (Standard), 1 = Fleet only)"
+                    },
+                    "esacoList": {
+                        "type": "array",
+                        "description": "List of Schwacke Esacos applicable to the basic equipment",
+                        "items": {
+                            "$ref": "#/components/schemas/Esaco"
+                        }
+                    },
+                    "colorDataList": {
+                        "type": "array",
+                        "description": "List of available colors for this basic equipment",
+                        "items": {
+                            "$ref": "#/components/schemas/ColorData"
+                        }
+                    }
+                }
+            },
+            "ColorData": {
+                "type": "object",
+                "properties": {
+                    "orderCode": {
+                        "type": "string",
+                        "description": "Order code of the color"
+                    },
+                    "manufacturerColorName": {
+                        "type": "string",
+                        "description": "Name of the color by the manufacturer"
+                    },
+                    "manufacturerColorType": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "The type of a manufacturer color: exterior color or interior upholstery color. 0 = Exterior color, 1 = Interior upholstery color"
+                    },
+                    "basicColorName": {
+                        "type": "string",
+                        "description": "Name of the base color"
+                    },
+                    "basicColorCode": {
+                        "type": "string",
+                        "description": "Code of the base color"
+                    }
+                }
+            },
+            "Esaco": {
+                "type": "object",
+                "properties": {
+                    "esaco": {
+                        "type": "string",
+                        "description": "SOA code according to Schwacke"
+                    },
+                    "esacoName": {
+                        "type": "string",
+                        "description": "The name of the esaco"
+                    },
+                    "mainGroup": {
+                        "type": "string",
+                        "description": "The main group ID"
+                    },
+                    "mainGroupName": {
+                        "type": "string",
+                        "description": "The name of the main group"
+                    },
+                    "subGroup": {
+                        "type": "string",
+                        "description": "The sub-group ID"
+                    },
+                    "subGroupName": {
+                        "type": "string",
+                        "description": "The name of the sub-group"
+                    }
+                }
+            },
+            "GetAllMakesResponse": {
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Make"
+                        }
+                    }
+                }
+            },
+            "GetMakeResponse": {
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Make"
+                    }
+                }
+            },
+            "JsonString": {
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Make": {
+                "type": "object",
+                "required": [
+                    "datasource",
+                    "datasources",
+                    "globalMakeId",
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Schwacke NATCode of the vehicle manufacturer"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the vehicle manufacturer"
+                    },
+                    "globalMakeId": {
+                        "type": "string",
+                        "description": "ID that identifies this make among different datasources"
+                    },
+                    "datasource": {
+                        "type": "string",
+                        "description": "Datasource that identifies the origin of the data"
+                    },
+                    "datasources": {
+                        "type": "array",
+                        "description": "Datasources that identify all the origins of the data",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Model": {
+                "type": "object",
+                "required": [
+                    "datasource",
+                    "globalMakeId",
+                    "globalModelId",
+                    "id",
+                    "makeId",
+                    "modelSerialCode",
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Schwacke NATCode of the model"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the model"
+                    },
+                    "makeId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Schwacke NATCode of the manufacturer"
+                    },
+                    "globalModelId": {
+                        "type": "string",
+                        "description": "ID of the model across all data sources"
+                    },
+                    "globalMakeId": {
+                        "type": "string",
+                        "description": "ID of the manufacturer across all data sources"
+                    },
+                    "datasource": {
+                        "type": "string",
+                        "description": "Data source of the data"
+                    },
+                    "modelSerialCode": {
+                        "type": "string",
+                        "description": "Serial code of the model"
+                    },
+                    "modelSubName": {
+                        "type": "string",
+                        "description": "Usually the manufacturer's model code"
+                    },
+                    "productionStart": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2016-02-02T00:00:00.000Z",
+                        "description": "The start date of the model production. Due to the standardization of the date format, the day \"01\" was added, although this information is not included in the original data.\n"
+                    },
+                    "productionEnd": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2016-02-02T00:00:00.000Z",
+                        "description": "The end date of the model production. Due to the standardization of the date format, the day \"01\" was added, although this information is not included in the original data."
+                    }
+                }
+            },
+            "OptionalEquipment": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Schwacke additional ID of the optional equipment"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Schwacke SOA code of the optional equipment"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the optional equipment"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Long text / description of the optional equipment"
+                    },
+                    "manufacturerCode": {
+                        "type": "string",
+                        "description": "Manufacturer order code of the optional equipment"
+                    },
+                    "flagPack": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Flag that describes if the equipment belongs to a package, is individual, or both. 0 - Individual item 1 - Equipment package 2 - Individual item but also included in an equipment package"
+                    },
+                    "targetGroup": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Flag that describes if the equipment belongs to a fleet package: 0 = Customer (Standard) 1 = Fleet only"
+                    },
+                    "priceNet": {
+                        "type": "number",
+                        "description": "Net price of the optional equipment"
+                    },
+                    "priceGross": {
+                        "type": "number",
+                        "description": "Gross price of the optional equipment"
+                    },
+                    "taxRate": {
+                        "type": "number",
+                        "description": "Value added tax rate in %"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "Currency (usually EUR)"
+                    },
+                    "colorDataList": {
+                        "type": "array",
+                        "description": "List of available colors for this optional equipment",
+                        "items": {
+                            "$ref": "#/components/schemas/ColorData"
+                        }
+                    },
+                    "esacoList": {
+                        "type": "array",
+                        "description": "List of Schwacke Esacos applicable to the optional equipment",
+                        "items": {
+                            "$ref": "#/components/schemas/Esaco"
+                        }
+                    }
+                }
+            },
+            "PriceList": {
+                "type": "object",
+                "required": [
+                    "datasource",
+                    "priceListBeginDate",
+                    "priceListEndDate"
+                ],
+                "properties": {
+                    "priceListBeginDate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2016-09-28T00:00:00.000Z",
+                        "description": "Start date of the price list validity (ISO 8601 format)"
+                    },
+                    "priceListEndDate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2016-09-28T00:00:00.000Z",
+                        "description": "End date of the price list validity (ISO 8601 format)"
+                    },
+                    "datasource": {
+                        "type": "string",
+                        "description": "Data source of the data"
+                    }
+                }
+            },
+            "ResourceErrorResponse": {
+                "type": "object",
+                "required": [
+                    "timestamp",
+                    "status",
+                    "error",
+                    "message",
+                    "path"
+                ],
+                "properties": {
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2019-09-16T22:14:45.624+0000",
+                        "description": "Timestamp of when the error occurred"
+                    },
+                    "status": {
+                        "type": "integer",
+                        "example": "<STATUS_CODE>",
+                        "description": "HTTP status code"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "<ERROR_TYPE>",
+                        "description": "Short description of the error"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "<ERROR_MESSAGE>",
+                        "description": "Detailed error message"
+                    },
+                    "path": {
+                        "type": "string",
+                        "example": "<REQUEST_PATH>",
+                        "description": "The path that triggered the error"
+                    },
+                    "requestId": {
+                        "type": "string",
+                        "example": "<REQUEST_PATH>",
+                        "description": "Unique identifier for the request associated with the error"
+                    }
+                }
+            },
+            "UserInputErrorResponse": {
+                "type": "object",
+                "required": [
+                    "timestamp",
+                    "status",
+                    "error",
+                    "message",
+                    "path"
+                ],
+                "properties": {
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2019-09-16T22:14:45.624+0000",
+                        "description": "Timestamp of when the error occurred"
+                    },
+                    "status": {
+                        "type": "integer",
+                        "example": "<STATUS_CODE>",
+                        "description": "HTTP status code"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "<ERROR_TYPE>",
+                        "description": "Short description of the error"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "<ERROR_MESSAGE>",
+                        "description": "Detailed error message"
+                    },
+                    "path": {
+                        "type": "string",
+                        "example": "<REQUEST_PATH>",
+                        "description": "The path that triggered the error"
+                    },
+                    "requestId": {
+                        "type": "string",
+                        "example": "<REQUEST_ID>",
+                        "description": "Unique identifier for the request associated with the error"
+                    }
+                }
+            },
+            "SearchModelsResponse": {
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Model"
+                        }
+                    }
+                }
+            },
+            "SearchPriceListResponse": {
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PriceList"
+                        }
+                    }
+                }
+            },
+            "SearchTypeSummariesResponse": {
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/summary"
+                        }
+                    }
+                }
+            },
+            "Type": {
+                "type": "object",
+                "required": [
+                    "sid",
+                    "schwackeCode",
+                    "manufacturerCodes",
+                    "dataSource",
+                    "model",
+                    "bodyType",
+                    "bodyTypeCode",
+                    "driveType",
+                    "driveTypeCode",
+                    "transmissionType",
+                    "transmissionTypeCode",
+                    "productionBegin",
+                    "productionEnd",
+                    "prices",
+                    "wheel",
+                    "doors",
+                    "seats",
+                    "dimensions",
+                    "engine",
+                    "certifications",
+                    "lastModifiedDate",
+                    "gears",
+                    "brakes",
+                    "weight",
+                    "battery",
+                    "onBoardVoltage",
+                    "automation",
+                    "fuel",
+                    "cargoVolume",
+                    "package",
+                    "brand",
+                    "equipment"
+                ],
+                "properties": {
+                    "sid": {
+                        "type": "string",
+                        "description": "SID of the car"
+                    },
+                    "schwackeCode": {
+                        "type": "string",
+                        "description": "Schwacke code of the car"
+                    },
+                    "manufacturerCodes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Manufacturer codes for the car"
+                    },
+                    "dataSource": {
+                        "type": "string",
+                        "description": "Data source of the car"
+                    },
+                    "model": {
+                        "type": "object",
+                        "required": [
+                            "sid",
+                            "schwackeCode",
+                            "name",
+                            "yearBegin",
+                            "yearEnd",
+                            "productionBegin",
+                            "productionEnd",
+                            "vehicleClass",
+                            "vehicleClassCode",
+                            "schwackeVehicleType",
+                            "make",
+                            "dataSource",
+                            "description",
+                            "seriaCode"
+                        ],
+                        "properties": {
+                            "sid": {
+                                "type": "string",
+                                "description": "SID of the model"
+                            },
+                            "schwackeCode": {
+                                "type": "string",
+                                "description": "Schwacke code of the model"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the model"
+                            },
+                            "yearBegin": {
+                                "type": "string",
+                                "description": "Start year of the model"
+                            },
+                            "yearEnd": {
+                                "type": "string",
+                                "description": "End year of the model"
+                            },
+                            "productionBegin": {
+                                "type": "string",
+                                "description": "Start date of production of the model"
+                            },
+                            "productionEnd": {
+                                "type": "string",
+                                "description": "End date of production of the model"
+                            },
+                            "vehicleClass": {
+                                "type": "string",
+                                "description": "Vehicle class of the model"
+                            },
+                            "vehicleClassCode": {
+                                "type": "string",
+                                "description": "Vehicle class code of the model"
+                            },
+                            "schwackeVehicleType": {
+                                "type": "integer",
+                                "description": "Schwacke vehicle type of the model"
+                            },
+                            "make": {
+                                "type": "object",
+                                "properties": {
+                                    "dataSources": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Data sources of the make"
+                                    }
+                                },
+                                "description": "Make of the model"
+                            },
+                            "dataSource": {
+                                "type": "string",
+                                "description": "Data source of the model"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Description of the model"
+                            },
+                            "seriaCode": {
+                                "type": "string",
+                                "description": "Seria code of the model"
+                            },
+                            "name2": {
+                                "type": "string",
+                                "description": "Name2 of the model"
+                            }
+                        },
+                        "description": "Model information"
+                    },
+                    "bodyType": {
+                        "type": "string",
+                        "description": "Body type of the car"
+                    },
+                    "bodyTypeCode": {
+                        "type": "string",
+                        "description": "Body type code of the car"
+                    },
+                    "driveType": {
+                        "type": "string",
+                        "description": "Drive type of the car"
+                    },
+                    "driveTypeCode": {
+                        "type": "string",
+                        "description": "Drive type code of the car"
+                    },
+                    "transmissionType": {
+                        "type": "string",
+                        "description": "Transmission type of the car"
+                    },
+                    "transmissionTypeCode": {
+                        "type": "string",
+                        "description": "Transmission type code of the car"
+                    },
+                    "productionBegin": {
+                        "type": "string",
+                        "description": "Start date of car production"
+                    },
+                    "productionEnd": {
+                        "type": "string",
+                        "description": "End date of car production"
+                    },
+                    "prices": {
+                        "type": "object",
+                        "required": [
+                            "currency",
+                            "net",
+                            "gross",
+                            "taxRate",
+                            "beginDate",
+                            "endDate"
+                        ],
+                        "properties": {
+                            "currency": {
+                                "type": "string",
+                                "description": "Currency of the car prices"
+                            },
+                            "net": {
+                                "type": "number",
+                                "description": "Net price of the car"
+                            },
+                            "gross": {
+                                "type": "number",
+                                "description": "Gross price of the car"
+                            },
+                            "taxRate": {
+                                "type": "number",
+                                "description": "Tax rate of the car"
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "description": "Start date of car price"
+                            },
+                            "endDate": {
+                                "type": "string",
+                                "description": "End date of car price"
+                            }
+                        },
+                        "description": "Car price information"
+                    },
+                    "wheel": {
+                        "type": "object",
+                        "properties": {
+                            "tyre": {
+                                "type": "object",
+                                "properties": {
+                                    "width": {
+                                        "type": "integer",
+                                        "description": "Width of the tire"
+                                    },
+                                    "aspectRatio": {
+                                        "type": "integer",
+                                        "description": "Aspect ratio of the tire"
+                                    },
+                                    "construction": {
+                                        "type": "string",
+                                        "description": "Construction type of the tire"
+                                    }
+                                },
+                                "description": "Tire information"
+                            },
+                            "rimWidth": {
+                                "type": "number",
+                                "description": "Rim width"
+                            },
+                            "diameter": {
+                                "type": "integer",
+                                "description": "Diameter of the wheel"
+                            },
+                            "operationAfterFlatTyre": {
+                                "type": "string",
+                                "description": "Operation after a flat tire"
+                            },
+                            "standardCombination": {
+                                "type": "string",
+                                "description": "Standard wheel-tire combination"
+                            },
+                            "recordStatus": {
+                                "type": "string",
+                                "description": "Record status of wheel-tire combination"
+                            },
+                            "dataValidAsOf": {
+                                "type": "string",
+                                "description": "Date when data became valid"
+                            }
+                        },
+                        "description": "Wheel information"
+                    },
+                    "doors": {
+                        "type": "integer",
+                        "description": "Number of doors"
+                    },
+                    "seats": {
+                        "type": "integer",
+                        "description": "Number of seats"
+                    },
+                    "dimensions": {
+                        "type": "object",
+                        "properties": {
+                            "length": {
+                                "type": "integer",
+                                "description": "Length of the car"
+                            },
+                            "width": {
+                                "type": "integer",
+                                "description": "Width of the car"
+                            },
+                            "platformLengthMin": {
+                                "type": "integer",
+                                "description": "Minimum platform length"
+                            },
+                            "platformLengthMax": {
+                                "type": "integer",
+                                "description": "Maximum platform length"
+                            },
+                            "platformWidthMin": {
+                                "type": "integer",
+                                "description": "Minimum platform width"
+                            },
+                            "platformWidthMax": {
+                                "type": "integer",
+                                "description": "Maximum platform width"
+                            },
+                            "wheelBase": {
+                                "type": "integer",
+                                "description": "Wheelbase of the car"
+                            }
+                        },
+                        "description": "Car dimensions"
+                    },
+                    "engine": {
+                        "type": "object",
+                        "required": [
+                            "engineType",
+                            "engineTypeCode",
+                            "fuelType",
+                            "fuelTypeCode",
+                            "cylinders",
+                            "power",
+                            "displacement",
+                            "co2Emission",
+                            "fuelConsumption",
+                            "emissionStandard",
+                            "emissionStandardCode",
+                            "energyEfficiencyClass"
+                        ],
+                        "properties": {
+                            "engineType": {
+                                "type": "string",
+                                "description": "Type of the car engine"
+                            },
+                            "engineTypeCode": {
+                                "type": "string",
+                                "description": "Engine type code"
+                            },
+                            "fuelType": {
+                                "type": "string",
+                                "description": "Type of fuel used"
+                            },
+                            "fuelTypeCode": {
+                                "type": "string",
+                                "description": "Fuel type code"
+                            },
+                            "cylinders": {
+                                "type": "integer",
+                                "description": "Number of cylinders"
+                            },
+                            "power": {
+                                "type": "object",
+                                "properties": {
+                                    "kw": {
+                                        "type": "integer",
+                                        "description": "Power in kilowatts"
+                                    },
+                                    "ps": {
+                                        "type": "integer",
+                                        "description": "Power in horsepower"
+                                    }
+                                },
+                                "description": "Engine power information"
+                            },
+                            "displacement": {
+                                "type": "integer",
+                                "description": "Engine displacement"
+                            },
+                            "co2Emission": {
+                                "type": "integer",
+                                "description": "CO2 emission"
+                            },
+                            "co2Emission2": {
+                                "type": "integer",
+                                "description": "CO2 Emission 2"
+                            },
+                            "fuelConsumption": {
+                                "type": "object",
+                                "properties": {
+                                    "urban": {
+                                        "type": "number",
+                                        "description": "Urban fuel consumption"
+                                    },
+                                    "extraUrban": {
+                                        "type": "number",
+                                        "description": "Extra-urban fuel consumption"
+                                    },
+                                    "combined": {
+                                        "type": "number",
+                                        "description": "Combined fuel consumption"
+                                    },
+                                    "gasUnit": {
+                                        "type": "string",
+                                        "description": "Unit of gas measurement"
+                                    },
+                                    "gasUnitCode": {
+                                        "type": "string",
+                                        "description": "Gas unit code"
+                                    },
+                                    "gasExtraUrban": {
+                                        "type": "number",
+                                        "description": "Gas Consumption Land"
+                                    },
+                                    "gasCombined": {
+                                        "type": "number",
+                                        "description": "Gas Consumption Combined"
+                                    },
+                                    "urban2": {
+                                        "type": "number",
+                                        "description": "Consumption Urban 2"
+                                    },
+                                    "combined2": {
+                                        "type": "number",
+                                        "description": "Consumption Combined 2"
+                                    },
+                                    "batteryCapacity": {
+                                        "type": "number",
+                                        "description": "Battery Capacity"
+                                    },
+                                    "power": {
+                                        "type": "number",
+                                        "description": "Battery Consumption"
+                                    },
+                                    "extraUrban2": {
+                                        "type": "number",
+                                        "description": "Consumption Land 2"
+                                    },
+                                    "gasUrban": {
+                                        "type": "number",
+                                        "description": "Gas Consumption Urban"
+                                    }
+                                },
+                                "description": "Fuel consumption information"
+                            },
+                            "emissionStandard": {
+                                "type": "string",
+                                "description": "Emission standard"
+                            },
+                            "emissionStandardCode": {
+                                "type": "string",
+                                "description": "Emission standard code"
+                            },
+                            "energyEfficiencyClass": {
+                                "type": "string",
+                                "description": "Energy efficiency class"
+                            },
+                            "energyEfficiencyClassCode": {
+                                "type": "string",
+                                "description": "Energy efficiency class code"
+                            },
+                            "cylindersArrangement": {
+                                "type": "string",
+                                "description": "Cylinders arrangement"
+                            },
+                            "forcedInductionSystem": {
+                                "type": "string",
+                                "description": "Forced induction system"
+                            },
+                            "requiresAdBlue": {
+                                "type": "boolean",
+                                "description": "Whether AdBlue is required"
+                            },
+                            "adBlueCapacity": {
+                                "type": "integer",
+                                "description": "AdBlue capacity"
+                            },
+                            "startStop": {
+                                "type": "boolean",
+                                "description": "Start-stop system"
+                            },
+                            "hybridSystemKW": {
+                                "type": "integer",
+                                "description": "Hybrid system power in kilowatts"
+                            },
+                            "hybridSystemHP": {
+                                "type": "integer",
+                                "description": "Hybrid system power in horsepower"
+                            },
+                            "hybridSystemTorque": {
+                                "type": "integer",
+                                "description": "Hybrid system torque"
+                            },
+                            "numberOfElectricEngines": {
+                                "type": "integer",
+                                "description": "Number of electric engines"
+                            },
+                            "electricPowerPeakKW": {
+                                "type": "integer",
+                                "description": "Electric power peak in kilowatts"
+                            },
+                            "electricPowerPeakHP": {
+                                "type": "integer",
+                                "description": "Electric power peak in horsepower"
+                            },
+                            "electricPeakTorque": {
+                                "type": "integer",
+                                "description": "Electric peak torque"
+                            },
+                            "electricContinuousPowerKW30": {
+                                "type": "integer",
+                                "description": "Electric continuous power in kilowatts (30 minutes)"
+                            },
+                            "electricContinuousPowerHP30": {
+                                "type": "integer",
+                                "description": "Electric continuous power in horsepower (30 minutes)"
+                            },
+                            "electricContinuousTorque30": {
+                                "type": "integer",
+                                "description": "Electric continuous torque (30 minutes)"
+                            },
+                            "electricContinuousPowerKW60": {
+                                "type": "integer",
+                                "description": "Electric continuous power in kilowatts (60 minutes)"
+                            },
+                            "electricContinuousPowerHP60": {
+                                "type": "integer",
+                                "description": "Electric continuous power in horsepower (60 minutes)"
+                            },
+                            "electricContinuousTorque60": {
+                                "type": "integer",
+                                "description": "Electric continuous torque (60 minutes)"
+                            },
+                            "powerInNationalHomologationPapersKW": {
+                                "type": "integer",
+                                "description": "Power in national homologation papers in kilowatts"
+                            }
+                        },
+                        "description": "Engine information"
+                    },
+                    "certifications": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "hsn": {
+                                    "type": "string",
+                                    "description": "HSN (Herstellernummer) number"
+                                },
+                                "tsn": {
+                                    "type": "string",
+                                    "description": "TSN (Typschlüsselnummer) number"
+                                }
+                            },
+                            "description": "Certification information"
+                        }
+                    },
+                    "lastModifiedDate": {
+                        "type": "string",
+                        "description": "Date of the last modification"
+                    },
+                    "gears": {
+                        "type": "integer",
+                        "description": "Number of Gears"
+                    },
+                    "brakes": {
+                        "type": "object",
+                        "properties": {
+                            "HP": {
+                                "type": "integer",
+                                "description": "Brakes horse power"
+                            },
+                            "energyRecovery": {
+                                "type": "string",
+                                "description": "Brakes energy recovery"
+                            }
+                        },
+                        "description": "Brake information"
+                    },
+                    "weight": {
+                        "type": "object",
+                        "properties": {
+                            "total": {
+                                "type": "integer",
+                                "description": "Total Weight"
+                            },
+                            "kerbWeightMax": {
+                                "type": "integer",
+                                "description": "Kerb weight Max"
+                            },
+                            "kerbWeightExclMax": {
+                                "type": "integer",
+                                "description": "Kerb weight"
+                            }
+                        },
+                        "description": "Weight information"
+                    },
+                    "battery": {
+                        "type": "object",
+                        "properties": {
+                            "batteryCapacityAH": {
+                                "type": "number",
+                                "description": "Battery capacity (Ah)"
+                            },
+                            "batteryCapacityKWH": {
+                                "type": "number",
+                                "description": "Battery capacity (kWh)"
+                            },
+                            "batteryType": {
+                                "type": "string",
+                                "description": "Battery type"
+                            },
+                            "batteryVoltage": {
+                                "type": "number",
+                                "description": "Battery voltage (Volt)"
+                            },
+                            "batteryWarrantyMonths": {
+                                "type": "number",
+                                "description": "Battery warranty in months"
+                            },
+                            "batteryLocation": {
+                                "type": "string",
+                                "description": "Battery location"
+                            }
+                        },
+                        "description": "Battery information"
+                    },
+                    "onBoardVoltage": {
+                        "type": "integer",
+                        "description": "On-board voltage"
+                    },
+                    "automation": {
+                        "type": "object",
+                        "properties": {
+                            "autonomousLevelBase": {
+                                "type": "string",
+                                "description": "SAE Autonomous Level Base"
+                            },
+                            "autonomousLevelMax": {
+                                "type": "string",
+                                "description": "SAE Autonomous Level Max"
+                            },
+                            "startSupport": {
+                                "type": "string",
+                                "description": "Start Support"
+                            }
+                        },
+                        "description": "Automation information"
+                    },
+                    "fuel": {
+                        "type": "object",
+                        "properties": {
+                            "gasTankCapacity": {
+                                "type": "integer",
+                                "description": "Capacity of the Gas tank"
+                            },
+                            "gasTankCapacityUnit": {
+                                "type": "string",
+                                "description": "Gas tank capacity unit"
+                            }
+                        },
+                        "description": "Fuel"
+                    },
+                    "cargoVolume": {
+                        "type": "integer",
+                        "description": "Cargo volume"
+                    },
+                    "package": {
+                        "type": "string",
+                        "description": "Package"
+                    },
+                    "brand": {
+                        "type": "object",
+                        "properties": {
+                            "sid": {
+                                "type": "string",
+                                "description": "Brand Santander ID"
+                            },
+                            "schwackeCode": {
+                                "type": "string",
+                                "description": "Brand Code"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Brand Name"
+                            }
+                        },
+                        "description": "Brand"
+                    },
+                    "equipment": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Equipment included"
+                    }
+                },
+                "description": "Car response object"
+            },
+            "TypeResponse": {
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Type"
+                    }
+                }
+            },
+            "summary": {
+                "type": "object",
+                "required":
+                [
+                    "sid",
+                    "schwackeCode",
+                    "dataSource",
+                    "model",
+                    "bodyType",
+                    "bodyTypeCode",
+                    "driveType",
+                    "driveTypeCode",
+                    "transmissionType",
+                    "transmissionTypeCode",
+                    "productionBegin",
+                    "productionEnd",
+                    "prices",
+                    "wheel",
+                    "doors",
+                    "seats",
+                    "dimensions",
+                    "engine",
+                    "certifications",
+                    "lastModifiedDate",
+                    "gears",
+                    "brakes",
+                    "weight",
+                    "battery",
+                    "onBoardVoltage",
+                    "automation",
+                    "fuel",
+                    "cargoVolume",
+                    "package",
+                    "brand"
+                ],
+                "properties": {
+                    "sid": {
+                        "type": "string",
+                        "description": "A unique identifier for the vehicle in the system."
+                    },
+                    "schwackeCode": {
+                        "type": "string",
+                        "description": "The Schwacke code for the vehicle."
+                    },
+                    "dataSource": {
+                        "type": "string",
+                        "description": "The data source for the vehicle information."
+                    },
+                    "manufacturerCodes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Manufacturer codes for the car"
+                    },
+                    "model": {
+                        "type": "object",
+                        "required": [
+                            "sid",
+                            "schwackeCode",
+                            "name",
+                            "name2",
+                            "yearBegin",
+                            "yearEnd",
+                            "productionBegin",
+                            "productionEnd",
+                            "vehicleClass",
+                            "vehicleClassCode",
+                            "make",
+                            "dataSource",
+                            "description"
+                        ],
+                        "properties": {
+                            "sid": {
+                                "type": "string",
+                                "description": "Unique identifier for the model."
+                            },
+                            "schwackeCode": {
+                                "type": "string",
+                                "description": "The Schwacke code for the model."
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the model."
+                            },
+                            "name2": {
+                                "type": "string",
+                                "description": "An alternative name for the model."
+                            },
+                            "yearBegin": {
+                                "type": "string",
+                                "description": "The beginning year of production for the model."
+                            },
+                            "yearEnd": {
+                                "type": "string",
+                                "description": "The ending year of production for the model."
+                            },
+                            "productionBegin": {
+                                "type": "string",
+                                "format": "date",
+                                "description": "The production start date for the model."
+                            },
+                            "productionEnd": {
+                                "type": "string",
+                                "format": "date",
+                                "description": "The production end date for the model."
+                            },
+                            "vehicleClass": {
+                                "type": "string",
+                                "description": "The class of the vehicle model."
+                            },
+                            "vehicleClassCode": {
+                                "type": "string",
+                                "description": "The code representing the vehicle class."
+                            },
+                            "make": {
+                                "type": "object",
+                                "properties": {
+                                    "dataSources": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "dataSource": {
+                                "type": "string",
+                                "description": "The data source for the model."
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "A description of the model."
+                            },
+                            "schwackeVehicleType": {
+                                "type": "integer",
+                                "description": "Schwacke vehicle type of the model"
+                            },
+                            "seriaCode": {
+                                "type": "string",
+                                "description": "Seria code of the model"
+                            }
+                        }
+                    },
+                    "bodyType": {
+                        "type": "string",
+                        "description": "The body type of the vehicle."
+                    },
+                    "bodyTypeCode": {
+                        "type": "string",
+                        "description": "The code representing the body type of the vehicle."
+                    },
+                    "driveType": {
+                        "type": "string",
+                        "description": "The drive type of the vehicle."
+                    },
+                    "driveTypeCode": {
+                        "type": "string",
+                        "description": "The code representing the drive type of the vehicle."
+                    },
+                    "transmissionType": {
+                        "type": "string",
+                        "description": "The transmission type of the vehicle."
+                    },
+                    "transmissionTypeCode": {
+                        "type": "string",
+                        "description": "The code representing the transmission type of the vehicle."
+                    },
+                    "productionBegin": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The production start date for the vehicle."
+                    },
+                    "productionEnd": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The production end date for the vehicle."
+                    },
+                    "prices": {
+                        "type": "object",
+                        "required": [
+                            "currency",
+                            "net",
+                            "gross",
+                            "taxRate",
+                            "beginDate",
+                            "endDate"
+                        ],
+                        "properties": {
+                            "currency": {
+                                "type": "string",
+                                "description": "The currency in which the prices are specified."
+                            },
+                            "net": {
+                                "type": "number",
+                                "description": "The net price of the vehicle."
+                            },
+                            "gross": {
+                                "type": "number",
+                                "description": "The gross price of the vehicle."
+                            },
+                            "taxRate": {
+                                "type": "number",
+                                "description": "The tax rate applied to the price."
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "The start date when the prices become valid."
+                            },
+                            "endDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "The end date when the prices are no longer valid."
+                            }
+                        }
+                    },
+                    "wheel": {
+                        "type": "object",
+                        "properties": {
+                            "tyre": {
+                                "type": "object",
+                                "properties": {
+                                    "width": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "description": "The width of the tire."
+                                    },
+                                    "aspectRatio": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "description": "The aspect ratio of the tire."
+                                    },
+                                    "construction": {
+                                        "type": "string",
+                                        "description": "The construction type of the tire."
+                                    }
+                                }
+                            },
+                            "rimWidth": {
+                                "type": "number",
+                                "description": "The width of the rim."
+                            },
+                            "diameter": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "The diameter of the wheel."
+                            },
+                            "operationAfterFlatTyre": {
+                                "type": "string",
+                                "description": "Operation to be performed after a flat tire."
+                            },
+                            "standardCombination": {
+                                "type": "string",
+                                "description": "Standard wheel-tire combination."
+                            },
+                            "recordStatus": {
+                                "type": "string",
+                                "description": "Status of the wheel record."
+                            },
+                            "dataValidAsOf": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Date when wheel data is valid."
+                            }
+                        }
+                    },
+                    "doors": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "The number of doors in the vehicle."
+                    },
+                    "seats": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "The number of seats in the vehicle."
+                    },
+                    "dimensions": {
+                        "type": "object",
+                        "properties": {
+                            "length": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "The length of the vehicle."
+                            },
+                            "width": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "The width of the vehicle."
+                            },
+                            "platformLengthMin": {
+                                "type": "integer",
+                                "description": "Minimum platform length"
+                            },
+                            "platformLengthMax": {
+                                "type": "integer",
+                                "description": "Maximum platform length"
+                            },
+                            "platformWidthMin": {
+                                "type": "integer",
+                                "description": "Minimum platform width"
+                            },
+                            "platformWidthMax": {
+                                "type": "integer",
+                                "description": "Maximum platform width"
+                            },
+                            "wheelBase": {
+                                "type": "integer",
+                                "description": "Wheelbase of the car"
+                            }
+                        }
+                    },
+                    "engine": {
+                        "type": "object",
+                        "required": [
+                            "engineType",
+                            "engineTypeCode",
+                            "fuelType",
+                            "fuelTypeCode",
+                            "cylinders",
+                            "power",
+                            "displacement",
+                            "co2Emission",
+                            "fuelConsumption",
+                            "emissionStandard",
+                            "emissionStandardCode",
+                            "energyEfficiencyClass"
+                        ],
+                        "properties": {
+                            "engineType": {
+                                "type": "string",
+                                "description": "Type of the car engine"
+                            },
+                            "engineTypeCode": {
+                                "type": "string",
+                                "description": "Engine type code"
+                            },
+                            "fuelType": {
+                                "type": "string",
+                                "description": "Type of fuel used"
+                            },
+                            "fuelTypeCode": {
+                                "type": "string",
+                                "description": "Fuel type code"
+                            },
+                            "cylinders": {
+                                "type": "integer",
+                                "description": "Number of cylinders"
+                            },
+                            "power": {
+                                "type": "object",
+                                "properties": {
+                                    "kw": {
+                                        "type": "integer",
+                                        "description": "Power in kilowatts"
+                                    },
+                                    "ps": {
+                                        "type": "integer",
+                                        "description": "Power in horsepower"
+                                    }
+                                },
+                                "description": "Engine power information"
+                            },
+                            "displacement": {
+                                "type": "integer",
+                                "description": "Engine displacement"
+                            },
+                            "co2Emission": {
+                                "type": "integer",
+                                "description": "CO2 emission"
+                            },
+                            "co2Emission2": {
+                                "type": "integer",
+                                "description": "CO2 Emission 2"
+                            },
+                            "fuelConsumption": {
+                                "type": "object",
+                                "properties": {
+                                    "urban": {
+                                        "type": "number",
+                                        "description": "Urban fuel consumption"
+                                    },
+                                    "extraUrban": {
+                                        "type": "number",
+                                        "description": "Extra-urban fuel consumption"
+                                    },
+                                    "combined": {
+                                        "type": "number",
+                                        "description": "Combined fuel consumption"
+                                    },
+                                    "gasUnit": {
+                                        "type": "string",
+                                        "description": "Unit of gas measurement"
+                                    },
+                                    "gasUnitCode": {
+                                        "type": "string",
+                                        "description": "Gas unit code"
+                                    },
+                                    "gasExtraUrban": {
+                                        "type": "number",
+                                        "description": "Gas Consumption Land"
+                                    },
+                                    "gasCombined": {
+                                        "type": "number",
+                                        "description": "Gas Consumption Combined"
+                                    },
+                                    "urban2": {
+                                        "type": "number",
+                                        "description": "Consumption Urban 2"
+                                    },
+                                    "combined2": {
+                                        "type": "number",
+                                        "description": "Consumption Combined 2"
+                                    },
+                                    "batteryCapacity": {
+                                        "type": "number",
+                                        "description": "Battery Capacity"
+                                    },
+                                    "power": {
+                                        "type": "number",
+                                        "description": "Battery Consumption"
+                                    },
+                                    "extraUrban2": {
+                                        "type": "number",
+                                        "description": "Consumption Land 2"
+                                    },
+                                    "gasUrban": {
+                                        "type": "string",
+                                        "description": "Gas Consumption Urban"
+                                    }
+                                },
+                                "description": "Fuel consumption information"
+                            },
+                            "emissionStandard": {
+                                "type": "string",
+                                "description": "Emission standard"
+                            },
+                            "emissionStandardCode": {
+                                "type": "string",
+                                "description": "Emission standard code"
+                            },
+                            "energyEfficiencyClass": {
+                                "type": "string",
+                                "description": "Energy efficiency class"
+                            },
+                            "energyEfficiencyClassCode": {
+                                "type": "string",
+                                "description": "Energy efficiency class code"
+                            },
+                            "cylindersArrangement": {
+                                "type": "string",
+                                "description": "Cylinders arrangement"
+                            },
+                            "forcedInductionSystem": {
+                                "type": "string",
+                                "description": "Forced induction system"
+                            },
+                            "requiresAdBlue": {
+                                "type": "boolean",
+                                "description": "Whether AdBlue is required"
+                            },
+                            "adBlueCapacity": {
+                                "type": "integer",
+                                "description": "AdBlue capacity"
+                            },
+                            "startStop": {
+                                "type": "boolean",
+                                "description": "Start-stop system"
+                            },
+                            "hybridSystemKW": {
+                                "type": "integer",
+                                "description": "Hybrid system power in kilowatts"
+                            },
+                            "hybridSystemHP": {
+                                "type": "integer",
+                                "description": "Hybrid system power in horsepower"
+                            },
+                            "hybridSystemTorque": {
+                                "type": "integer",
+                                "description": "Hybrid system torque"
+                            },
+                            "numberOfElectricEngines": {
+                                "type": "integer",
+                                "description": "Number of electric engines"
+                            },
+                            "electricPowerPeakKW": {
+                                "type": "integer",
+                                "description": "Electric power peak in kilowatts"
+                            },
+                            "electricPowerPeakHP": {
+                                "type": "integer",
+                                "description": "Electric power peak in horsepower"
+                            },
+                            "electricPeakTorque": {
+                                "type": "integer",
+                                "description": "Electric peak torque"
+                            },
+                            "electricContinuousPowerKW30": {
+                                "type": "integer",
+                                "description": "Electric continuous power in kilowatts (30 minutes)"
+                            },
+                            "electricContinuousPowerHP30": {
+                                "type": "integer",
+                                "description": "Electric continuous power in horsepower (30 minutes)"
+                            },
+                            "electricContinuousTorque30": {
+                                "type": "integer",
+                                "description": "Electric continuous torque (30 minutes)"
+                            },
+                            "electricContinuousPowerKW60": {
+                                "type": "integer",
+                                "description": "Electric continuous power in kilowatts (60 minutes)"
+                            },
+                            "electricContinuousPowerHP60": {
+                                "type": "integer",
+                                "description": "Electric continuous power in horsepower (60 minutes)"
+                            },
+                            "electricContinuousTorque60": {
+                                "type": "integer",
+                                "description": "Electric continuous torque (60 minutes)"
+                            },
+                            "powerInNationalHomologationPapersKW": {
+                                "type": "integer",
+                                "description": "Power in national homologation papers in kilowatts"
+                            }
+                        },
+                        "description": "Engine information"
+                    },
+                    "certifications": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "hsn": {
+                                    "type": "string",
+                                    "description": "HSN (Herstellernummer) number"
+                                },
+                                "tsn": {
+                                    "type": "string",
+                                    "description": "TSN (Typschlüsselnummer) number"
+                                }
+                            },
+                            "description": "Certification information"
+                        }
+                    },
+                    "lastModifiedDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The date and time when the vehicle record was last modified."
+                    },
+                    "gears": {
+                        "type": "integer",
+                        "description": "The number of gears in the vehicle's transmission."
+                    },
+                    "brakes": {
+                        "type": "object",
+                        "properties": {
+                            "HP": {
+                                "type": "integer",
+                                "description": "Brakes horse power"
+                            },
+                            "energyRecovery": {
+                                "type": "string",
+                                "description": "Brakes energy recovery"
+                            }
+                        },
+                        "description": "Brake information"
+                    },
+                    "weight": {
+                        "type": "object",
+                        "properties": {
+                            "total": {
+                                "type": "integer",
+                                "description": "Total Weight"
+                            },
+                            "kerbWeightMax": {
+                                "type": "integer",
+                                "description": "Kerb weight Max"
+                            },
+                            "kerbWeightExclMax": {
+                                "type": "integer",
+                                "description": "Kerb weight"
+                            }
+                        },
+                        "description": "Weight information"
+                    },
+                    "battery": {
+                        "type": "object",
+                        "properties": {
+                            "batteryCapacityAH": {
+                                "type": "number",
+                                "description": "Battery capacity (Ah)"
+                            },
+                            "batteryCapacityKWH": {
+                                "type": "number",
+                                "description": "Battery capacity (kWh)"
+                            },
+                            "batteryType": {
+                                "type": "string",
+                                "description": "Battery type"
+                            },
+                            "batteryVoltage": {
+                                "type": "number",
+                                "description": "Battery voltage (Volt)"
+                            },
+                            "batteryWarrantyMonths": {
+                                "type": "number",
+                                "description": "Battery warranty in months"
+                            },
+                            "batteryLocation": {
+                                "type": "string",
+                                "description": "Battery location"
+                            }
+                        },
+                        "description": "Battery information"
+                    },
+                    "onBoardVoltage": {
+                        "type": "integer",
+                        "description": "The onboard voltage of the vehicle's electrical system."
+                    },
+                    "automation": {
+                        "type": "object",
+                        "properties": {
+                            "autonomousLevelBase": {
+                                "type": "string",
+                                "description": "SAE Autonomous Level Base"
+                            },
+                            "autonomousLevelMax": {
+                                "type": "string",
+                                "description": "SAE Autonomous Level Max"
+                            },
+                            "startSupport": {
+                                "type": "string",
+                                "description": "Start Support"
+                            }
+                        },
+                        "description": "Automation information"
+                    },
+                    "fuel": {
+                        "type": "object",
+                        "properties": {
+                            "gasTankCapacity": {
+                                "type": "integer",
+                                "description": "Capacity of the Gas tank"
+                            },
+                            "gasTankCapacityUnit": {
+                                "type": "string",
+                                "description": "Gas tank capacity unit"
+                            }
+                        },
+                        "description": "Fuel"
+                    },
+                    "cargoVolume": {
+                        "type": "number",
+                        "description": "The cargo volume or capacity of the vehicle."
+                    },
+                    "package": {
+                        "type": "string",
+                        "description": "The package or trim level of the vehicle."
+                    },
+                    "brand": {
+                        "type": "object",
+                        "properties": {
+                            "sid": {
+                                "type": "string",
+                                "description": "Brand Santander ID"
+                            },
+                            "schwackeCode": {
+                                "type": "string",
+                                "description": "Brand Code"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Brand Name"
+                            }
+                        },
+                        "description": "Brand"
+                    }
+                }
+            }
+        }
+    }
+}
