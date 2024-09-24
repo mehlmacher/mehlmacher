@@ -1,0 +1,747 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "VIS Inventory Search API",
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": ""
+    }
+  ],
+  "paths": {
+    "/search_by_vin": {
+      "post": {
+        "summary": "Search by VIN",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetVehicleByVin_Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVehicleByVin_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: Validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/execute_vehicle_valuation": {
+      "post": {
+        "summary": "Valuate vehicle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetVehicleValuation_Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVehicleValuation_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: Validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "GeneralErrorResponse": {
+          "type": "object",
+          "required": [
+            "timestamp",
+            "status",
+            "error",
+            "message",
+            "path"
+          ],
+          "properties": {
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2019-09-16T22:14:45.624+0000",
+              "description": "Timestamp of when the error occurred"
+            },
+            "status": {
+              "type": "integer",
+              "example": "<STATUS_CODE>",
+              "description": "HTTP status code"
+            },
+            "error": {
+              "type": "string",
+              "example": "<ERROR_TYPE>",
+              "description": "Short description of the error"
+            },
+            "message": {
+              "type": "string",
+              "example": "<ERROR_MESSAGE>",
+              "description": "Detailed error message"
+            },
+            "path": {
+              "type": "string",
+              "example": "<REQUEST_PATH>",
+              "description": "The path that triggered the error"
+            },
+            "requestId": {
+              "type": "string",
+              "example": "<REQUEST_ID>",
+              "description": "Unique identifier for the request associated with the error"
+            }
+          }
+        },
+        "GetVehicleByVin_Response": {
+          "type": "object",
+          "required": [
+            "data"
+          ],
+          "properties": {
+            "data": {
+              "type": "object",
+              "required": [
+                "schwackeCode",
+                "bodyType",
+                "doors",
+                "gears",
+                "transmissionType",
+                "vin",
+                "brand",
+                "model",
+                "engine",
+                "price",
+                "dates",
+                "color",
+                "upholstery"
+              ],
+              "properties": {
+                "schwackeCode": {
+                  "type": "string",
+                  "description": "Schwacke NAT Code of the type, also known as \"Schwacke-Code\""
+                },
+                "bodyType": {
+                  "type": "string",
+                  "description": "Body type, e.g., Sedan"
+                },
+                "doors": {
+                  "type": "integer",
+                  "description": "Number of doors"
+                },
+                "gears": {
+                  "type": "integer",
+                  "description": "Number of gears"
+                },
+                "transmissionType": {
+                  "type": "string",
+                  "description": "Transmission type, e.g., Automatic, Manual transmission"
+                },
+                "vin": {
+                  "type": "string",
+                  "description": "The Vehicle Identification Number (VIN) of the vehicle."
+                },
+                "brand": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Brand name"
+                    }
+                  }
+                },
+                "model": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the model."
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "A description of the model."
+                    }
+                  },
+                  "description": "Model data"
+                },
+                "engine": {
+                  "type": "object",
+                  "properties": {
+                    "size": {
+                      "type": "string",
+                      "description": "Engine size, e.g. 1390"
+                    },
+                    "fuelType": {
+                      "type": "string",
+                      "description": "Fuel type, e.g. gasoline or diesel"
+                    },
+                    "power": {
+                      "type": "object",
+                      "properties": {
+                        "kw": {
+                          "type": "integer",
+                          "description": "Engine power in kW"
+                        },
+                        "ps": {
+                          "type": "integer",
+                          "description": "Engine power in PS"
+                        }
+                      }
+                    }
+                  }
+                },
+                "price": {
+                  "type": "object",
+                  "description": "Vehicle price",
+                  "properties": {
+                    "net": {
+                      "type": "number",
+                      "description": "Vehicle price base model net (without equipment)"
+                    },
+                    "gross": {
+                      "type": "number",
+                      "description": "Vehicle price base model gross (without equipment)"
+                    }
+                  }
+                },
+                "dates": {
+                  "type": "object",
+                  "properties": {
+                    "production": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "The production date of the vehicle."
+                    },
+                    "delivery": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "The delivery date of the vehicle."
+                    },
+                    "registration": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "The registration date of the vehicle."
+                    }
+                  },
+                  "required": [
+                    "production",
+                    "delivery",
+                    "registration"
+                  ],
+                  "description": "Dates related to the vehicle including production, delivery, and registration dates."
+                },
+                "color": {
+                  "type": "object",
+                  "description": "Information about the vehicle's color.",
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "description": "The description of the vehicle's color."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "The color code associated with the vehicle's color."
+                    }
+                  }
+                },
+                "upholstery": {
+                  "type": "object",
+                  "description": "Information about the vehicle's upholstery.",
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "description": "The description of the vehicle's upholstery."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "The upholstery code associated with the vehicle's upholstery."
+                    }
+                  }
+                },
+                "equipment": {
+                  "type": "object",
+                  "properties": {
+                    "basic": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "equipmentCode": {
+                            "type": "integer",
+                            "description": "The unique equipment code."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The name of the equipment."
+                          },
+                          "manufacturerCode": {
+                            "type": "string",
+                            "description": "The manufacturer code of the equipment."
+                          },
+                          "priceListBeginDate": {
+                            "type": "string",
+                            "format": "date",
+                            "description": "The start date of the price list for the equipment."
+                          },
+                          "priceListEndDate": {
+                            "type": "string",
+                            "format": "date",
+                            "description": "The end date of the price list for the equipment."
+                          },
+                          "esaco": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "code": {
+                                  "type": "string",
+                                  "description": "The ESACO code associated with the equipment."
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "equipmentCode",
+                          "name",
+                          "manufacturerCode",
+                          "priceListBeginDate",
+                          "priceListEndDate",
+                          "esaco"
+                        ]
+                      }
+                    },
+                    "selected": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "equipmentCode": {
+                            "type": "integer",
+                            "description": "The unique equipment code."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The name of the equipment."
+                          },
+                          "manufacturerCode": {
+                            "type": "string",
+                            "description": "The manufacturer code of the equipment."
+                          },
+                          "price": {
+                            "type": "object",
+                            "properties": {
+                              "net": {
+                                "type": "number",
+                                "description": "The net price of the equipment."
+                              },
+                              "gross": {
+                                "type": "number",
+                                "description": "The gross price of the equipment."
+                              }
+                            },
+                            "required": [
+                              "net",
+                              "gross"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "equipmentCode",
+                          "name",
+                          "manufacturerCode",
+                          "price"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "basic",
+                    "selected"
+                  ],
+                  "description": "Equipment data including basic and selected equipment items."
+                },
+                "source": {
+                  "type": "string",
+                  "description": "Data source constant: VIN"
+                }
+              }
+            }
+          }
+        },
+        "GetVehicleByVin_Request": {
+          "required": [
+            "vin",
+            "vinSwitch"
+          ],
+          "type": "object",
+          "properties": {
+            "vin": {
+              "type": "string",
+              "description": "<!--GetVehicleByVin_Request-->VIN / Vehicle Identification Number of the vehicle"
+            },
+            "typeId": {
+              "type": "string",
+              "description": "<!--GetVehicleByVin_Request-->Schwacke-NAT code of the type (optional, especially for multiple responses from the service)"
+            },
+            "vinSwitch": {
+              "type": "integer",
+              "description": "<!--GetVehicleByVin_Request-->Switch for invoking the Schwacke VIN service:\n#### 1 = VIN query allowed:\nVIN query is allowed. However, the VIN query will only be performed if the vehicle is not already known in the Vehicle System (VS). If the vehicle is already known in the VS, the vehicle stored in the VS will be returned without a VIN query.\n#### 2 = VIN query not allowed:\nVIN query is not allowed. It only returns a vehicle if it is known in the VS; otherwise, an error message is returned.\n#### 3 = Force VIN query:\nVIN query is forced. In this case, if a vehicle is already known in the VS, it will be updated with the result from the VIN query. If the vehicle is not known, it will be newly created.",
+              "format": "int32"
+            }
+          },
+          "description": "Wholesales: Fetches the Vehicle of the VIN request (Schwacke VinService) Request's Format"
+        },
+        "GetVehicleValuation_Request": {
+          "required": [
+            "typeId",
+            "kilometrage",
+            "registrationDate"
+          ],
+          "type": "object",
+          "properties": {
+            "typeId": {
+              "type": "integer",
+              "description": "<!--GetVehicleValuation_Request-->Vehicle schwake code."
+            },
+            "kilometrage": {
+              "type": "integer",
+              "description": "<!--GetVehicleValuation_Request-->Kilometrage of vehicle."
+            },
+            "registrationDate": {
+              "type": "string",
+              "description": "<!--GetVehicleValuation_Request-->Registration date of car.",
+              "format": "int32"
+            }
+          }
+        },
+        "GetVehicleValuation_Response": {
+          "required": [
+            "data"
+          ],
+          "type": "object",
+          "properties": {
+            "data": {
+              "title": "GetVehicleByVin Response general properties",
+              "type": "object",
+              "properties": {
+                "valuation": {
+                  "type": "object",
+                  "properties": {
+                    "lowMileageIndicator": {
+                      "type": "number"
+                    },
+                    "mileage": {
+                      "type": "number"
+                    },
+                    "calculationMode": {
+                      "type": "string"
+                    },
+                    "nationalVehicleCode": {
+                      "type": "number"
+                    },
+                    "averageMileage": {
+                      "type": "number"
+                    },
+                    "residualValueAgeAdjusted": {
+                      "type": "object",
+                      "properties": {
+                        "tradeAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "retailAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "b2Bamount": {
+                          "type": "number",
+                          "format": "double"
+                        }
+                      }
+                    },
+                    "residualValueAgeMileageAdjusted": {
+                      "type": "object",
+                      "properties": {
+                        "tradeAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "retailAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "b2Bamount": {
+                          "type": "number",
+                          "format": "double"
+                        }
+                      }
+                    },
+                    "totalValuation": {
+                      "type": "object",
+                      "properties": {
+                        "tradeAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "retailAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "b2Bamount": {
+                          "type": "number",
+                          "format": "double"
+                        }
+                      }
+                    },
+                    "basicResidualValue": {
+                      "type": "object",
+                      "properties": {
+                        "tradeAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "retailAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "b2Bamount": {
+                          "type": "number",
+                          "format": "double"
+                        }
+                      }
+                    },
+                    "monthlyAdjustmentValue": {
+                      "type": "object",
+                      "properties": {
+                        "tradeAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "retailAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "b2Bamount": {
+                          "type": "number",
+                          "format": "double"
+                        }
+                      }
+                    },
+                    "mileageAdjustmentValue": {
+                      "type": "object",
+                      "properties": {
+                        "tradeAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "retailAmount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "b2Bamount": {
+                          "type": "number",
+                          "format": "double"
+                        }
+                      }
+                    },
+                    "actualNewPrice": {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "isocurrencyCode": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "equipmentList": {
+                      "type": "object",
+                      "properties": {
+                        "equipment": {
+                          "type": "array",
+                          "items": {
+                            "title": "equipment",
+                            "type": "object"
+                          }
+                        },
+                        "totalEquipmentValuation": {
+                          "type": "object",
+                          "properties": {
+                            "tradeAmount": {
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "retailAmount": {
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "b2Bamount": {
+                              "type": "number",
+                              "format": "double"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "valueAddedItemList": {
+                      "type": "object",
+                      "properties": {
+                        "valueAddedItem": {
+                          "type": "array",
+                          "items": {
+                            "title": "equipment",
+                            "type": "object"
+                          }
+                        },
+                        "totalValueAddedItemValuation": {
+                          "type": "object",
+                          "properties": {
+                            "tradeAmount": {
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "retailAmount": {
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "b2Bamount": {
+                              "type": "number",
+                              "format": "double"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "devaluationItemList": {
+                      "type": "object",
+                      "properties": {
+                        "devaluationItem": {
+                          "type": "array",
+                          "items": {
+                            "title": "equipment",
+                            "type": "object"
+                          }
+                        },
+                        "totalDevaluationItemValuation": {
+                          "type": "object",
+                          "properties": {
+                            "tradeAmount": {
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "retailAmount": {
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "b2Bamount": {
+                              "type": "number",
+                              "format": "double"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "registrationDate": {
+                      "type": "object",
+                      "properties": {
+                        "year": {
+                          "type": "number"
+                        },
+                        "month": {
+                          "type": "number"
+                        },
+                        "day": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "valuationDate": {
+                      "type": "object",
+                      "properties": {
+                        "year": {
+                          "type": "number"
+                        },
+                        "month": {
+                          "type": "number"
+                        },
+                        "day": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "description": "Determines the current market value of an existing vehicle based on the transferred Schwacke-TypId, the date of the first registration, the mileage and the transferred special equipment."
+        }
+      }
+    }
+  }
+}
